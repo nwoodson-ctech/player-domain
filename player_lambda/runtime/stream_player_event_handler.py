@@ -15,10 +15,10 @@ logger = Logger(service="StreamPlayerEventHandler")
 @logger.inject_lambda_context
 def handler(event: EventBridgeEvent, context: LambdaContext) -> str:
     event_bus_detail_data = event.detail
-
+    logger.info(event_bus_detail_data)
     client.put_record(
         StreamName="player-domain-stream",
-        Data=base64.encode(json.dumps(event_bus_detail_data)),
+        Data=base64.encode(event_bus_detail_data),
         PartitionKey="SavePlayer"
     )
 
