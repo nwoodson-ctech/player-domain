@@ -5,10 +5,9 @@ from aws_cdk import (
     SecretValue
 )
 
-from player_lambda.infrastructure.change_player_event_stage import ChangePlayerEventStage
-from player_lambda.infrastructure.player_changed_event_stage import PlayerChangedEventStage
 from player_lambda.infrastructure.add_player_event_stage import AddPlayerEventStage
 from event_bridge.infrastructure.player_event_bridge_stage import PlayerEventBridgeStage
+from player_lambda.infrastructure.stream_player_event_stage import StreamPlayerEventStage
 
 
 class PipelineStack(Stack):
@@ -37,22 +36,18 @@ class PipelineStack(Stack):
                                       )
         )
 
-        deploy_change_player_event = ChangePlayerEventStage(
-            self, "DeployChangePlayerEvent")
-        deploy_change_player_event_stage = code_pipeline.add_stage(
-            deploy_change_player_event)
 
         deploy_add_player_event = AddPlayerEventStage(
             self, "DeployAddPlayerEvent")
-        deploy_add_player_event_stage = code_pipeline.add_stage(
+        code_pipeline.add_stage(
             deploy_add_player_event)
 
         deploy_player_event_bridge = PlayerEventBridgeStage(
             self, "DeployPlayerEventBridge")
-        deploy_player_event_bridge_stage = code_pipeline.add_stage(
+        code_pipeline.add_stage(
             deploy_player_event_bridge)
 
-        deploy_player_changed_event = PlayerChangedEventStage(
-            self, "DeployPlayerChangedEvent")
-        deploy_change_player_event_stage = code_pipeline.add_stage(
-            deploy_player_changed_event)
+        deploy_stream_player_event = StreamPlayerEventStage(
+            self, "DeployStreamPlayerEventHandler"
+        )
+        code_pipeline.add_stage(deploy_stream_player_event)
