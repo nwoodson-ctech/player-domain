@@ -1,12 +1,11 @@
-from constructs import Construct
 from aws_cdk import (
     Stack,
     Duration,
     aws_events as events,
     aws_events_targets as target,
-    aws_iam as iam,
     aws_lambda_python_alpha as python
 )
+from constructs import Construct
 
 
 class PlayerEventBridgeStack(Stack):
@@ -33,10 +32,10 @@ class PlayerEventBridgeStack(Stack):
         add_player_rule = events.Rule(self, "add-player-rule",
                                       event_bus=player_event_bus,
                                       event_pattern=events.EventPattern(
-                                            detail_type=["player"],
-                                            detail={
-                                                "eventName": ["AddPlayer"]
-                                            },
+                                          detail_type=["player"],
+                                          detail={
+                                              "eventName": ["AddPlayer"]
+                                          },
                                       )
                                       )
 
@@ -49,14 +48,14 @@ class PlayerEventBridgeStack(Stack):
             ))
 
         save_player_rule = events.Rule(self, "save-player-rule",
-                                      event_bus=player_event_bus,
-                                      event_pattern=events.EventPattern(
-                                            detail_type=["player"],
-                                            detail={
-                                                "eventName": ["SavePlayer"]
-                                            },
-                                      )
-                                      )
+                                       event_bus=player_event_bus,
+                                       event_pattern=events.EventPattern(
+                                           detail_type=["player"],
+                                           detail={
+                                               "eventName": ["SavePlayer"]
+                                           },
+                                       )
+                                       )
 
         stream_player_lambda = python.PythonFunction.from_function_name(
             self, "StreamPlayerEventHandler", "StreamPlayerEventHandler")
@@ -64,4 +63,22 @@ class PlayerEventBridgeStack(Stack):
         save_player_rule.add_target(
             target.LambdaFunction(
                 stream_player_lambda
+            ))
+
+        update_player_stats_rule = events.Rule(self, "update-player-stats-rule",
+                                               event_bus=player_event_bus,
+                                               event_pattern=events.EventPattern(
+                                                   detail_type=["player"],
+                                                   detail={
+                                                       "eventName": ["UpdatePlayer"]
+                                                   },
+                                               )
+                                               )
+
+        sqs_player_lambda = python.PythonFunction.from_function_name(
+            self, "SQSPlayerEventHandler", "SQSPlayerEventHandler")
+
+        update_player_stats_rule.add_target(
+            target.LambdaFunction(
+                sqs_player_lambda
             ))

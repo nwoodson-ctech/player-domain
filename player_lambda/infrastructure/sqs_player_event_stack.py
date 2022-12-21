@@ -32,7 +32,7 @@ class SQSPlayerEventStack(Stack):
             "PlayerSQS",
             "arn:aws:sqs:us-east-1:499104388492:player-sqs-stack-1029")
 
-        player_sqs.grant_consume_messages(sqs_player_event_handler)
+        player_sqs.grant_send_messages(sqs_player_event_handler)
 
         lambda_.EventSourceMapping(
             self,
