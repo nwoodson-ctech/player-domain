@@ -8,6 +8,7 @@ from aws_cdk import (
 from player_lambda.infrastructure.add_player_event_stage import AddPlayerEventStage
 from event_bridge.infrastructure.player_event_bridge_stage import PlayerEventBridgeStage
 from player_lambda.infrastructure.stream_player_event_stage import StreamPlayerEventStage
+from player_lambda.infrastructure.sqs_player_event_stage import SQSPlayerEventStage
 
 
 class PipelineStack(Stack):
@@ -51,3 +52,8 @@ class PipelineStack(Stack):
             self, "DeployStreamPlayerEventHandler"
         )
         code_pipeline.add_stage(deploy_stream_player_event)
+
+        deploy_sqs_player_event = SQSPlayerEventStage(
+            self, "DeploySQSPlayerEventHandler"
+        )
+        code_pipeline.add_stage(deploy_sqs_player_event)
